@@ -257,20 +257,21 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 						if (checkBlackOpponent(e.getX(), e.getY())) {
 							validMove = true;
 							if (landingY == 0) {
-								progression = true;
+								int location = 0 + (e.getX()/75);
+								if (c instanceof JLabel) {
+									Container parent = c.getParent();
+									parent.remove(0);
+									pieces = new JLabel(new ImageIcon("BlackQueen.png"));
+									parent = (JPanel) chessBoard.getComponent(location);
+									parent.add(pieces);
+								}
+								else {
+									Container parent = (Container) c;
+									pieces = new JLabel(new ImageIcon("BlackQueen.png"));
+									parent = (JPanel) chessBoard.getComponent(location);
+									parent.add(pieces);
+								}
 							}
-						}
-					}
-				}
-				else {
-					if (progression) {
-						int location = 0 + (e.getX() / 75);
-						if (c instanceof JLabel) {
-							Container parent = c.getParent();
-							parent.remove(0);
-							pieces = new JLabel(new ImageIcon("BlackQueen.png"));
-							parent = (JPanel) chessBoard.getComponent(location);
-							parent.add(pieces);
 						}
 					}
 				}
@@ -279,24 +280,17 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 		else if(pieceName.equals("WhitePawn")){
 			if(startY == 1)
 			{
-				if((startX == (e.getX()/75))&&((((e.getY()/75)-startY)==1)||((e.getY()/75)-startY)==2))
+				if(((yMovement == 1 ) || (yMovement == 2)) && (startY < landingY) && (xMovement == 0))
 				{
-					if((((e.getY()/75)-startY)==2)){
-						if((!piecePresent(e.getX(), (e.getY())))&&(!piecePresent(e.getX(), (e.getY()+75)))){
-							validMove = true;					
+					if(yMovement==2){
+						if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() - 75)))){
+							validMove = true;
 						}
-						else{
-							validMove = false;
-						}							
 					}
 					else{
-						if((!piecePresent(e.getX(), (e.getY()))))
-						{
-							validMove = true;					
-						}	
-						else{
-							validMove = false;
-						}													
+						if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() - 75)))){
+							validMove = true;
+						}
 					}
 				}
 				else{
