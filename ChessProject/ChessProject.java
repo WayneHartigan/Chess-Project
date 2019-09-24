@@ -203,11 +203,11 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 		int xMovement = Math.abs((e.getX()/75)-startX);
 		int yMovement = Math.abs((e.getY()/75)-startY);
 		System.out.println("------------------------------------------------------------");
-		System.out.println("The piece that is being moved is: "+pieceName);
-		System.out.println("The starting coordinates are: "+" ("+startX+", "+startY+")");
-		System.out.println("The xMovement is: "+xMovement);
-		System.out.println("The yMovement is: "+yMovement);
-		System.out.println("The landing coordinates are: ("+landingX+", "+landingY+")");
+		System.out.println("The piece that is being moved is: " + pieceName);
+		System.out.println("The starting coordinates are: " + " (" + startX + ", " + startY + ")");
+		System.out.println("The xMovement is: " + xMovement);
+		System.out.println("The yMovement is: " + yMovement);
+		System.out.println("The landing coordinates are: (" + landingX + ", " + landingY + ")");
 		System.out.println("------------------------------------------------------------");
 
 		/*
@@ -334,8 +334,14 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 				else{
 					validMove = false;
 				}				
-			}			
+			}
 		}
+		else if (pieceName.equals("BlackKnight")) {
+			if (((yMovement == 2) && (xMovement == 1)) || ((xMovement == 2) && (yMovement == 1))) {
+				validMove = true;
+			}
+		}
+
 		if(!validMove){		
 			int location=0;
 			if(startY ==0){
