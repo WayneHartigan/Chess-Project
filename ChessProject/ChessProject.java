@@ -65,10 +65,10 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 		pieces = new JLabel( new ImageIcon("WhiteKnight.png") );
 		panels = (JPanel)chessBoard.getComponent(6);
 	    panels.add(pieces);
-		pieces = new JLabel( new ImageIcon("WhiteBishup.png") );
+		pieces = new JLabel( new ImageIcon("WhiteBishop.png") );
 		panels = (JPanel)chessBoard.getComponent(2);
 	    panels.add(pieces);
-		pieces = new JLabel( new ImageIcon("WhiteBishup.png") );
+		pieces = new JLabel( new ImageIcon("WhiteBishop.png") );
 		panels = (JPanel)chessBoard.getComponent(5);
 	    panels.add(pieces);
 		pieces = new JLabel( new ImageIcon("WhiteKing.png") );
@@ -94,10 +94,10 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 		pieces = new JLabel( new ImageIcon("BlackKnight.png") );
 		panels = (JPanel)chessBoard.getComponent(62);
 	    panels.add(pieces);
-		pieces = new JLabel( new ImageIcon("BlackBishup.png") );
+		pieces = new JLabel( new ImageIcon("BlackBishop.png") );
 		panels = (JPanel)chessBoard.getComponent(58);
 	    panels.add(pieces);
-		pieces = new JLabel( new ImageIcon("BlackBishup.png") );
+		pieces = new JLabel( new ImageIcon("BlackBishop.png") );
 		panels = (JPanel)chessBoard.getComponent(61);
 	    panels.add(pieces);
 		pieces = new JLabel( new ImageIcon("BlackKing.png") );
@@ -202,14 +202,6 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 		int landingY = (e.getY()/75);
 		int xMovement = Math.abs((e.getX()/75)-startX);
 		int yMovement = Math.abs((e.getY()/75)-startY);
-		System.out.println("------------------------------------------------------------");
-		System.out.println("The piece that is being moved is: " + pieceName);
-		System.out.println("The starting coordinates are: " + " (" + startX + ", " + startY + ")");
-		System.out.println("The xMovement is: " + xMovement);
-		System.out.println("The yMovement is: " + yMovement);
-		System.out.println("The landing coordinates are: (" + landingX + ", " + landingY + ")");
-		System.out.println("------------------------------------------------------------");
-
 		/*
 			The only piece that has been enabled to move is a White Pawn...but we should really have this is a separate
 			method somewhere...how would this work.
@@ -221,10 +213,8 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 			If a Pawn makes it to the top of the other side, the Pawn can turn into any other piece, for 
 			demonstration purposes the Pawn here turns into a Queen.
 		*/
-		if(pieceName.equals("BlackQueen")){
-		    validMove = true;
-		}
-		else if (pieceName.equals("BlackPawn")) {
+
+		if (pieceName.equals("BlackPawn")) {
 			if (startY == 6) {
 				if (((yMovement == 1) || (yMovement == 2)) && (startY > landingY) && (xMovement == 0)) {
 					if (yMovement == 2) {
@@ -336,9 +326,99 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 				}				
 			}
 		}
-		else if (pieceName.equals("BlackKnight")) {
-			if (((yMovement == 2) && (xMovement == 1)) || ((xMovement == 2) && (yMovement == 1))) {
+		else if (pieceName.contains("Knight")) {
+			if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
+				validMove = false;
+			} else {
+				if (((xMovement == 1) && (yMovement == 2)) || ((yMovement == 1) && (xMovement == 2))) {
+					if (piecePresent(e.getX(), (e.getY()))) {
+						if (pieceName.contains("White")) {
+							if (checkWhiteOpponent(e.getX(), e.getY())) {
+								validMove = true;
+							} else {
+								validMove = false;
+							}
+						} else {
+							if (checkBlackOpponent(e.getX(), e.getY())) {
+								validMove = true;
+							} else {
+								validMove = false;
+							}
+						}
+					} else {
+						validMove = true;
+					}
+				}
+			}
+		}
+
+		else if (pieceName.contains("Bishop")){
+			Boolean inTheWay = false;
+			int distance = Math.abs(startX-landingX);
+			if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))){
+				validMove = false;
+			}
+			else{
 				validMove = true;
+				if(Math.abs(startX-landingX)==Math.abs(startY-landingY)){
+					if((startX-landingX < 0)&&(startY-landingY < 0)){
+						for(int i=0; i < distance; i++){
+							if(piecePresent(((initialX+(i*75))), (initialY+(i*75)))){
+								inTheWay = true;
+							}
+						}
+					}
+					else if((startX-landingX < 0)&& (startY-landingY > 0)){
+						for(int i=0; i < distance; i++){
+							if(piecePresent((initialX+(i*75)), (initialY-(i*75)))){
+								inTheWay = true;
+							}
+						}
+					}
+					else if((startX-landingX > 0)&& (startY-landingY > 0)){
+						for(int i=0; i < distance; i++){
+							if(piecePresent((initialX+(i*75)), (initialY-(i*75)))){
+								inTheWay = true;
+							}
+						}
+					}
+					else if((startX-landingX > 0)&& (startY-landingY < 0)){
+						for(int i=0; i < distance; i++){
+							if(piecePresent((initialX+(i*75)), (initialY-(i*75)))){
+								inTheWay = true;
+							}
+						}
+					}
+					if(inTheWay){
+						validMove = false;
+					}
+					else{
+						if(piecePresent(e.getX(), (e.getY()))){
+							if(pieceName.contains("White")){
+								if(checkWhiteOpponent(e.getX(), e.getY())){
+									validMove = true;
+								}
+								else{
+									validMove = false;
+								}
+							}
+							else{
+								if(checkBlackOpponent(e.getX(), e.getY())){
+									validMove = true;
+								}
+								else{
+									validMove = false;
+								}
+							}
+						}
+						else{
+							validMove = true;
+						}
+					}
+				}
+				else{
+					validMove = true;
+				}
 			}
 		}
 
@@ -384,6 +464,15 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 	        	}
 	    		chessPiece.setVisible(true);									
 			}
+		}
+		if ((startY != landingY) || (yMovement != 0) && (validMove == true)) {
+			System.out.println("------------------------------------------------------------");
+			System.out.println("The piece that is being moved is: " + pieceName);
+			System.out.println("The starting coordinates are: " + " (" + startX + ", " + startY + ")");
+			System.out.println("The xMovement is: " + xMovement);
+			System.out.println("The yMovement is: " + yMovement);
+			System.out.println("The landing coordinates are: (" + landingX + ", " + landingY + ")");
+			System.out.println("------------------------------------------------------------");
 		}
     }
  
