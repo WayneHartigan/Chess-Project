@@ -122,38 +122,137 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             return true;
         }
     }
-    private Boolean surroundPiecePresent(int newX, int newY){
-        Component c1 = chessBoard.findComponentAt((newX * 75), newY);
-        Component c2 = chessBoard.findComponentAt(newX, (newY * 75));
-        Component c3 = chessBoard.findComponentAt((newX * 75), (newY * 75));
-        Component c4 = chessBoard.findComponentAt((newX / 75), newY);
-        Component c5 = chessBoard.findComponentAt(newX, (newY / 75));
-        Component c6 = chessBoard.findComponentAt((newX / 75), (newY / 75));
-        Component c7 = chessBoard.findComponentAt((newX * 75), (newY / 75));
-        Component c8 = chessBoard.findComponentAt((newX / 75), (newY * 75));
-
-        if (c1 instanceof JPanel || c2 instanceof JPanel ||
-                c3 instanceof JPanel || c4 instanceof JPanel ||
-                c5 instanceof JPanel || c6 instanceof JPanel ||
-                c7 instanceof JPanel || c8 instanceof JPanel) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     private Boolean checkKingPresent(int newX, int newY){
-        Boolean oponent;
-        Component c1 = chessBoard.findComponentAt(newX, newY);
-        JLabel awaitingPiece = (JLabel)c1;
-        String tmp1 = awaitingPiece.getIcon().toString();
-        if(((tmp1.contains("King")))){
-            oponent = true;
+
+        Boolean kingPresent = false;
+
+        Component c1 = chessBoard.findComponentAt(((newX+75)), (newY)); //right
+        Component c2 = chessBoard.findComponentAt((newX), ((newY+75))); // below
+        Component c3 = chessBoard.findComponentAt(((newX+75)), ((newY+75))); // bottom right
+        Component c4 = chessBoard.findComponentAt(((newX-75)), (newY)); // left
+        Component c5 = chessBoard.findComponentAt((newX), ((newY-75))); // above
+        Component c6 = chessBoard.findComponentAt(((newX-75)), ((newY-75))); // top left
+        Component c7 = chessBoard.findComponentAt(((newX+75)), ((newY-75))); // top right
+        Component c8 = chessBoard.findComponentAt(((newX-75)), ((newY+75))); // bottom left
+
+        if (c1 != null) {
+            if (!(c1 instanceof JPanel)) {
+                JLabel awaitingPiece1 = (JLabel) c1;
+                String tmp1 = awaitingPiece1.getIcon().toString();
+                if (tmp1.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
         }
-        else{
-            oponent = false;
+
+        if(c2 != null) {
+            if (!(c2 instanceof JPanel)) {
+                JLabel awaitingPiece2 = (JLabel) c2;
+                String tmp2 = awaitingPiece2.getIcon().toString();
+                System.out.println(tmp2 + "tmp2");
+                if (tmp2.contains("King") && (tmp2 != null)) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
         }
-        return oponent;
+
+        if (c3 != null) {
+            if (!(c3 instanceof JPanel)) {
+                JLabel awaitingPiece3 = (JLabel) c3;
+                String tmp3 = awaitingPiece3.getIcon().toString();
+                System.out.println(tmp3 + "tmp3");
+                if (tmp3.contains("King") && (tmp3 != null)) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if(c4 != null) {
+            if (!(c4 instanceof JPanel)) {
+                JLabel awaitingPiece4 = (JLabel) c4;
+                String tmp4 = awaitingPiece4.getIcon().toString();
+                System.out.println(tmp4 + "tmp4");
+                if (tmp4.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if(c5 != null) {
+            if (!(c5 instanceof JPanel)) {
+                JLabel awaitingPiece5 = (JLabel) c5;
+                String tmp5 = awaitingPiece5.getIcon().toString();
+                System.out.println(tmp5 + "tmp5");
+                if (tmp5.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if(c6 != null) {
+            if (!(c6 instanceof JPanel)) {
+                JLabel awaitingPiece6 = (JLabel) c6;
+                String tmp6 = awaitingPiece6.getIcon().toString();
+                System.out.println(tmp6 + "tmp6");
+                if (tmp6.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if(c7 != null) {
+            if (!(c7 instanceof JPanel)) {
+                JLabel awaitingPiece7 = (JLabel) c7;
+                String tmp7 = awaitingPiece7.getIcon().toString();
+                System.out.println(tmp7 + "tmp7");
+                if (tmp7.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if(c8 != null) {
+            if (!(c8 instanceof JPanel)) {
+                JLabel awaitingPiece8 = (JLabel) c8;
+                String tmp8 = awaitingPiece8.getIcon().toString();
+                System.out.println(tmp8 + "tmp8");
+                if (tmp8.contains("King")) {
+                    System.out.println("King Here");
+                    kingPresent = true;
+                }
+            } else {
+                kingPresent = false;
+            }
+        }
+
+        if (kingPresent){
+            System.out.println("King here");
+            return kingPresent;
+        }
+        else {
+            return kingPresent;
+        }
     }
     /*
         This is a method to check if a piece is a Black piece.
@@ -339,29 +438,30 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 } else if (pieceName.contains("Black") && (!blackTurn)) {
                     validMove = false;
                 } else {
-                    if ((landingX > 7) || (landingY > 7)) {
-                        validMove = false;
-                    } else {
-                        if (((xMovement == 1) && (yMovement == 2)) || ((yMovement == 1) && (xMovement == 2))) {
-                            if (piecePresent(e.getX(), (e.getY()))) {
-                                if (pieceName.contains("White")) {
-                                    if (checkWhiteOpponent(e.getX(), e.getY())) {
-                                        validMove = true;
-                                    } else {
-                                        validMove = false;
-                                    }
-                                } else {
-                                    if (checkBlackOpponent(e.getX(), e.getY())) {
-                                        validMove = true;
-                                    } else {
-                                        validMove = false;
-                                    }
-                                }
-                            } else {
-                                validMove = true;
-                            }
-                        }
-                    }
+//                    if ((landingX > 7) || (landingY > 7)) {
+//                        validMove = false;
+//                    } else {
+//                        if (((xMovement == 1) && (yMovement == 2)) || ((yMovement == 1) && (xMovement == 2))) {
+//                            if (piecePresent(e.getX(), (e.getY()))) {
+//                                if (pieceName.contains("White")) {
+//                                    if (checkWhiteOpponent(e.getX(), e.getY())) {
+//                                        validMove = true;
+//                                    } else {
+//                                        validMove = false;
+//                                    }
+//                                } else {
+//                                    if (checkBlackOpponent(e.getX(), e.getY())) {
+//                                        validMove = true;
+//                                    } else {
+//                                        validMove = false;
+//                                    }
+//                                }
+//                            } else {
+//                                validMove = true;
+//                            }
+//                        }
+//                    }
+                    validMove = true;
                 }
             } else if (pieceName.contains("Bishop")) {
                 Boolean inTheWay = false;
@@ -636,55 +736,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 } else if (pieceName.contains("Black") && (!blackTurn)) {
                     validMove = false;
                 } else {
-                    if(surroundPiecePresent(e.getX(), (e.getY()))){
-                        int newX = e.getX();
-                        int newY = e.getY();
-                        Component c1 = chessBoard.findComponentAt((newX * 75), newY);
-                        Component c2 = chessBoard.findComponentAt(newX, (newY * 75));
-                        Component c3 = chessBoard.findComponentAt((newX * 75), (newY / 75));
-                        Component c4 = chessBoard.findComponentAt((newX / 75), newY);
-                        Component c5 = chessBoard.findComponentAt(newX, (newY / 75));
-                        Component c6 = chessBoard.findComponentAt((newX / 75), (newY / 75));
-                        Component c7 = chessBoard.findComponentAt((newX * 75), (newY / 75));
-                        Component c8 = chessBoard.findComponentAt((newX / 75), (newY * 75));
-
-                        JLabel awaitingPiece1 = (JLabel)c1;
-                        JLabel awaitingPiece2 = (JLabel)c2;
-                        JLabel awaitingPiece3 = (JLabel)c3;
-                        JLabel awaitingPiece4 = (JLabel)c4;
-                        JLabel awaitingPiece5 = (JLabel)c5;
-                        JLabel awaitingPiece6 = (JLabel)c6;
-                        JLabel awaitingPiece7 = (JLabel)c7;
-                        JLabel awaitingPiece8 = (JLabel)c8;
-
-                        String tmp1 = awaitingPiece1.getIcon().toString();
-                        String tmp2 = awaitingPiece2.getIcon().toString();
-                        String tmp3 = awaitingPiece3.getIcon().toString();
-                        String tmp4 = awaitingPiece4.getIcon().toString();
-                        String tmp5 = awaitingPiece5.getIcon().toString();
-                        String tmp6 = awaitingPiece6.getIcon().toString();
-                        String tmp7 = awaitingPiece7.getIcon().toString();
-                        String tmp8 = awaitingPiece8.getIcon().toString();
-
-                        if (((tmp1.contains("King")))){
-                            validMove = false;
-                        } else if (((tmp2.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp3.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp4.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp5.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp6.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp7.contains("King")))) {
-                            validMove = false;
-                        } else if (((tmp8.contains("King")))) {
-                            validMove = false;
-                        }
+                    if(checkKingPresent(e.getX(), (e.getY()))){
+                        validMove = false;
                     }
-
                     else if ((landingX > 7) || (landingY > 7)) {
                         validMove = false;
                     } else if ((xMovement > 1) || (yMovement > 1)) {
