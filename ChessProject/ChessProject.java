@@ -122,7 +122,39 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             return true;
         }
     }
+    private Boolean surroundPiecePresent(int newX, int newY){
+        Component c1 = chessBoard.findComponentAt((newX * 75), newY);
+        Component c2 = chessBoard.findComponentAt(newX, (newY * 75));
+        Component c3 = chessBoard.findComponentAt((newX * 75), (newY * 75));
+        Component c4 = chessBoard.findComponentAt((newX / 75), newY);
+        Component c5 = chessBoard.findComponentAt(newX, (newY / 75));
+        Component c6 = chessBoard.findComponentAt((newX / 75), (newY / 75));
+        Component c7 = chessBoard.findComponentAt((newX * 75), (newY / 75));
+        Component c8 = chessBoard.findComponentAt((newX / 75), (newY * 75));
 
+        if (c1 instanceof JPanel || c2 instanceof JPanel ||
+                c3 instanceof JPanel || c4 instanceof JPanel ||
+                c5 instanceof JPanel || c6 instanceof JPanel ||
+                c7 instanceof JPanel || c8 instanceof JPanel) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private Boolean checkKingPresent(int newX, int newY){
+        Boolean oponent;
+        Component c1 = chessBoard.findComponentAt(newX, newY);
+        JLabel awaitingPiece = (JLabel)c1;
+        String tmp1 = awaitingPiece.getIcon().toString();
+        if(((tmp1.contains("King")))){
+            oponent = true;
+        }
+        else{
+            oponent = false;
+        }
+        return oponent;
+    }
     /*
         This is a method to check if a piece is a Black piece.
     */
@@ -188,7 +220,10 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         if (chessPiece == null) return;
 
         chessPiece.setVisible(false);
-        Boolean success = false;
+        Boolean whiteSuccess = false;
+        Boolean blackSuccess = false;
+        Boolean whiteTurn = true;
+        Boolean blackTurn = true;
         Boolean progression = false;
         Component c = chessBoard.findComponentAt(e.getX(), e.getY());
         String tmp = chessPiece.getIcon().toString();
@@ -213,303 +248,446 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 			If a Pawn makes it to the top of the other side, the Pawn can turn into any other piece, for 
 			demonstration purposes the Pawn here turns into a Queen.
 		*/
-
-        if (pieceName.equals("BlackPawn")) {
-            if (startY == 6) {
-                if (((yMovement == 1) || (yMovement == 2)) && (startY > landingY) && (xMovement == 0)) {
-                    if (yMovement == 2) {
-                        if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() + 75)))) {
-                            validMove = true;
+        try {
+            if (pieceName.equals("BlackPawn")) {
+                if (!blackTurn) {
+                    validMove = false;
+                } else {
+                    if (startY == 6) {
+                        if (((yMovement == 1) || (yMovement == 2)) && (startY > landingY) && (xMovement == 0)) {
+                            if (yMovement == 2) {
+                                if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() + 75)))) {
+                                    validMove = true;
+                                }
+                            } else {
+                                if (!piecePresent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                }
+                            }
+                        } else if ((yMovement == 1) && (startY > landingY) && (xMovement == 1)) {
+                            if (piecePresent(e.getX(), e.getY())) {
+                                if (checkBlackOpponent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                }
+                            }
                         }
                     } else {
-                        if (!piecePresent(e.getX(), e.getY())) {
-                            validMove = true;
-                        }
-                    }
-                } else if ((yMovement == 1) && (startY > landingY) && (xMovement == 1)) {
-                    if (piecePresent(e.getX(), e.getY())) {
-                        if (checkBlackOpponent(e.getX(), e.getY())) {
-                            validMove = true;
-                        }
-                    }
-                }
-            } else {
-                if (((yMovement == 1)) && (startY > landingY) && (xMovement == 0)) {
-                    if (!piecePresent(e.getX(), e.getY())) {
-                        validMove = true;
-                    }
-                } else if ((yMovement == 1) && (startY > landingY) && (xMovement == 1)) {
-                    if (piecePresent(e.getX(), e.getY())) {
-                        if (checkBlackOpponent(e.getX(), e.getY())) {
-                            validMove = true;
-                            if (landingY == 0) {
-                                int location = 0 + (e.getX() / 75);
-                                if (c instanceof JLabel) {
-                                    Container parent = c.getParent();
-                                    parent.remove(0);
-                                    pieces = new JLabel(new ImageIcon("BlackQueen.png"));
-                                    parent = (JPanel) chessBoard.getComponent(location);
-                                    parent.add(pieces);
-                                } else {
-                                    Container parent = (Container) c;
-                                    pieces = new JLabel(new ImageIcon("BlackQueen.png"));
-                                    parent = (JPanel) chessBoard.getComponent(location);
-                                    parent.add(pieces);
+                        if (((yMovement == 1)) && (startY > landingY) && (xMovement == 0)) {
+                            if (!piecePresent(e.getX(), e.getY())) {
+                                validMove = true;
+                                if (landingY == 0) {
+                                    blackSuccess = true;
+                                }
+                            }
+                        } else if ((yMovement == 1) && (startY > landingY) && (xMovement == 1)) {
+                            if (piecePresent(e.getX(), e.getY())) {
+                                if (checkBlackOpponent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                    if (landingY == 0) {
+                                        blackSuccess = true;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        } else if (pieceName.equals("WhitePawn")) {
-            if (startY == 1) {
-                if (((yMovement == 1) || (yMovement == 2)) && (startY < landingY) && (xMovement == 0)) {
-                    if (yMovement == 2) {
-                        if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() - 75)))) {
-                            validMove = true;
+            } else if (pieceName.equals("WhitePawn")) {
+                if (!whiteTurn) {
+                    validMove = false;
+                } else {
+                    if (startY == 1) {
+                        if (((yMovement == 1) || (yMovement == 2)) && (startY < landingY) && (xMovement == 0)) {
+                            if (yMovement == 2) {
+                                if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() + 75)))) {
+                                    validMove = true;
+                                }
+                            } else {
+                                if (!piecePresent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                }
+                            }
+                        } else if ((yMovement == 1) && (startY < landingY) && (xMovement == 1)) {
+                            if (piecePresent(e.getX(), e.getY())) {
+                                if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                }
+                            }
                         }
                     } else {
-                        if (!piecePresent(e.getX(), e.getY()) && (!piecePresent(e.getX(), (e.getY() - 75)))) {
-                            validMove = true;
+                        if (((yMovement == 1)) && (startY < landingY) && (xMovement == 0)) {
+                            if (!piecePresent(e.getX(), e.getY())) {
+                                validMove = true;
+                                if (landingY == 7) {
+                                    whiteSuccess = true;
+                                }
+                            }
+                        } else if ((yMovement == 1) && (startY < landingY) && (xMovement == 1)) {
+                            if (piecePresent(e.getX(), e.getY())) {
+                                if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                    validMove = true;
+                                    if (landingY == 7) {
+                                        whiteSuccess = true;
+                                    }
+                                }
+                            }
                         }
                     }
-                } else {
-                    validMove = false;
                 }
-            } else {
-                int newY = e.getY() / 75;
-                int newX = e.getX() / 75;
-                if ((startX - 1 >= 0) || (startX + 1 <= 7)) {
-                    if ((piecePresent(e.getX(), (e.getY()))) && ((((newX == (startX + 1) && (startX + 1 <= 7))) || ((newX == (startX - 1)) && (startX - 1 >= 0))))) {
-                        if (checkWhiteOpponent(e.getX(), e.getY())) {
-                            validMove = true;
-                            if (startY == 6) {
-                                success = true;
+            } else if (pieceName.contains("Knight")) {
+                if (pieceName.contains("White") && (!whiteTurn)) {
+                    validMove = false;
+                } else if (pieceName.contains("Black") && (!blackTurn)) {
+                    validMove = false;
+                } else {
+                    if ((landingX > 7) || (landingY > 7)) {
+                        validMove = false;
+                    } else {
+                        if (((xMovement == 1) && (yMovement == 2)) || ((yMovement == 1) && (xMovement == 2))) {
+                            if (piecePresent(e.getX(), (e.getY()))) {
+                                if (pieceName.contains("White")) {
+                                    if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                        validMove = true;
+                                    } else {
+                                        validMove = false;
+                                    }
+                                } else {
+                                    if (checkBlackOpponent(e.getX(), e.getY())) {
+                                        validMove = true;
+                                    } else {
+                                        validMove = false;
+                                    }
+                                }
+                            } else {
+                                validMove = true;
+                            }
+                        }
+                    }
+                }
+            } else if (pieceName.contains("Bishop")) {
+                Boolean inTheWay = false;
+                int distance = Math.abs(startX - landingX);
+                if (pieceName.contains("White") && (!whiteTurn)) {
+                    validMove = false;
+                } else if (pieceName.contains("Black") && (!blackTurn)) {
+                    validMove = false;
+                } else {
+                    if ((landingX > 7) || (landingY > 7)) {
+                        validMove = false;
+                    } else {
+                        if (Math.abs(startX - landingX) == Math.abs(startY - landingY)) {
+                            if ((startX - landingX < 0) && (startY - landingY < 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent(((initialX + (i * 75))), (initialY + (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX < 0) && (startY - landingY > 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX + (i * 75)), (initialY - (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX > 0) && (startY - landingY > 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX - (i * 75)), (initialY - (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX > 0) && (startY - landingY < 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX - (i * 75)), (initialY + (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            }
+                            if (inTheWay) {
+                                validMove = false;
+                            } else {
+                                if (piecePresent(e.getX(), (e.getY()))) {
+                                    if (pieceName.contains("White")) {
+                                        if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    } else {
+                                        if (checkBlackOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    }
+                                } else {
+                                    validMove = true;
+                                }
                             }
                         } else {
                             validMove = false;
                         }
+                    }
+                }
+            } else if (pieceName.contains("Rook")) {
+                Boolean inTheWay = false;
+                if (pieceName.contains("White") && (!whiteTurn)) {
+                    validMove = false;
+                } else if (pieceName.contains("Black") && (!blackTurn)) {
+                    validMove = false;
+                } else {
+                    if ((landingX > 7) || (landingY > 7)) {
+                        validMove = false;
                     } else {
-                        if (!piecePresent(e.getX(), (e.getY()))) {
-                            if ((startX == (e.getX() / 75)) && ((e.getY() / 75) - startY) == 1) {
-                                if (startY == 6) {
-                                    success = true;
+                        if (((Math.abs(startX - landingX) != 0) && (Math.abs(startY - landingY) == 0)) || ((Math.abs(startX - landingX) == 0 && (landingY - startY) != 0))) {
+                            if (Math.abs(startX - landingX) != 0) {
+                                if (startX - landingX > 0) {
+                                    for (int i = 0; i < xMovement; i++) {
+                                        if (piecePresent(initialX - (i * 75), e.getY())) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                } else {
+                                    for (int i = 0; i < xMovement; i++) {
+                                        if (piecePresent(initialX + (i * 75), e.getY())) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
                                 }
-                                validMove = true;
                             } else {
+                                if (startY - landingY > 0) {
+                                    for (int i = 0; i < yMovement; i++) {
+                                        if (piecePresent(e.getX(), initialY - (i * 75))) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                } else {
+                                    for (int i = 0; i < yMovement; i++) {
+                                        if (piecePresent(e.getX(), initialY + (i * 57))) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                }
+                            }
+                            if (inTheWay) {
                                 validMove = false;
+                            } else {
+                                if (piecePresent(e.getX(), (e.getY()))) {
+                                    if (pieceName.contains("White")) {
+                                        if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    } else {
+                                        if (checkBlackOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    }
+                                } else {
+                                    validMove = true;
+                                }
                             }
                         } else {
                             validMove = false;
                         }
                     }
-                } else {
-                    validMove = false;
                 }
-            }
-        } else if (pieceName.contains("Knight")) {
-            if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
-                validMove = false;
-            } else {
-                if (((xMovement == 1) && (yMovement == 2)) || ((yMovement == 1) && (xMovement == 2))) {
-                    if (piecePresent(e.getX(), (e.getY()))) {
-                        if (pieceName.contains("White")) {
-                            if (checkWhiteOpponent(e.getX(), e.getY())) {
-                                validMove = true;
+            } else if (pieceName.contains("Queen")) {
+                Boolean inTheWay = false;
+                int distance = Math.abs(startX - landingX);
+                if (pieceName.contains("White") && (!whiteTurn)) {
+                    validMove = false;
+                } else if (pieceName.contains("Black") && (!blackTurn)) {
+                    validMove = false;
+                } else {
+                    if ((landingX > 7) || (landingY > 7)) {
+                        validMove = false;
+                    } else {
+                        if (((Math.abs(startX - landingX) != 0) && (Math.abs(startY - landingY) == 0)) || ((Math.abs(startX - landingX) == 0 && (landingY - startY) != 0))) {
+                            if (Math.abs(startX - landingX) != 0) {
+                                if (startX - landingX > 0) {
+                                    for (int i = 0; i < xMovement; i++) {
+                                        if (piecePresent(initialX - (i * 75), e.getY())) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                } else {
+                                    for (int i = 0; i < xMovement; i++) {
+                                        if (piecePresent(initialX + (i * 75), e.getY())) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                }
                             } else {
+                                if (startY - landingY > 0) {
+                                    for (int i = 0; i < yMovement; i++) {
+                                        if (piecePresent(e.getX(), initialY - (i * 75))) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                } else {
+                                    for (int i = 0; i < yMovement; i++) {
+                                        if (piecePresent(e.getX(), initialY + (i * 57))) {
+                                            inTheWay = true;
+                                            break;
+                                        } else {
+                                            inTheWay = false;
+                                        }
+                                    }
+                                }
+                            }
+                            if (inTheWay) {
                                 validMove = false;
-                            }
-                        } else {
-                            if (checkBlackOpponent(e.getX(), e.getY())) {
-                                validMove = true;
                             } else {
+                                if (piecePresent(e.getX(), (e.getY()))) {
+                                    if (pieceName.contains("White")) {
+                                        if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    } else {
+                                        if (checkBlackOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    }
+                                } else {
+                                    validMove = true;
+                                }
+                            }
+                        } else if (Math.abs(startX - landingX) == Math.abs(startY - landingY)) {
+                            if ((startX - landingX < 0) && (startY - landingY < 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent(((initialX + (i * 75))), (initialY + (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX < 0) && (startY - landingY > 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX + (i * 75)), (initialY - (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX > 0) && (startY - landingY > 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX - (i * 75)), (initialY - (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            } else if ((startX - landingX > 0) && (startY - landingY < 0)) {
+                                for (int i = 0; i < distance; i++) {
+                                    if (piecePresent((initialX - (i * 75)), (initialY + (i * 75)))) {
+                                        inTheWay = true;
+                                    }
+                                }
+                            }
+                            if (inTheWay) {
                                 validMove = false;
-                            }
-                        }
-                    } else {
-                        validMove = true;
-                    }
-                }
-            }
-        } else if (pieceName.contains("Bishop")) {
-            Boolean inTheWay = false;
-            int distance = Math.abs(startX - landingX);
-            if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
-                validMove = false;
-            } else {
-                if (Math.abs(startX - landingX) == Math.abs(startY - landingY)) {
-                    if ((startX - landingX < 0) && (startY - landingY < 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent(((initialX + (i * 75))), (initialY + (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX < 0) && (startY - landingY > 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX + (i * 75)), (initialY - (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX > 0) && (startY - landingY > 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX - (i * 75)), (initialY - (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX > 0) && (startY - landingY < 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX - (i * 75)), (initialY + (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    }
-                    if (inTheWay) {
-                        validMove = false;
-                    } else {
-                        if (piecePresent(e.getX(), (e.getY()))) {
-                            if (pieceName.contains("White")) {
-                                if (checkWhiteOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
-                                } else {
-                                    validMove = false;
-                                }
                             } else {
-                                if (checkBlackOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
+                                if (piecePresent(e.getX(), (e.getY()))) {
+                                    if (pieceName.contains("White")) {
+                                        if (checkWhiteOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    } else {
+                                        if (checkBlackOpponent(e.getX(), e.getY())) {
+                                            validMove = true;
+                                        } else {
+                                            validMove = false;
+                                        }
+                                    }
                                 } else {
-                                    validMove = false;
+                                    validMove = true;
                                 }
                             }
                         } else {
-                            validMove = true;
+                            validMove = false;
                         }
                     }
-                } else {
-                    validMove = false;
                 }
-            }
-        } else if (pieceName.contains("Rook")) {
-            Boolean inTheWay = false;
-            if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
-                validMove = false;
-            } else {
-                if (((Math.abs(startX - landingX) != 0) && (Math.abs(startY - landingY) == 0)) || ((Math.abs(startX - landingX) == 0 && (landingY - startY) != 0))) {
-                    if (Math.abs(startX - landingX) != 0) {
-                        if (startX - landingX > 0) {
-                            for (int i = 0; i < xMovement; i++) {
-                                if (piecePresent(initialX - (i * 75), e.getY())) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        } else {
-                            for (int i = 0; i < xMovement; i++) {
-                                if (piecePresent(initialX + (i * 75), e.getY())) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        }
-                    } else {
-                        if (startY - landingY > 0) {
-                            for (int i = 0; i < yMovement; i++) {
-                                if (piecePresent(e.getX(), initialY - (i * 75))) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        } else {
-                            for (int i = 0; i < yMovement; i++) {
-                                if (piecePresent(e.getX(), initialY + (i * 57))) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        }
-                    }
-                    if (inTheWay) {
-                        validMove = false;
-                    } else {
-                        if (piecePresent(e.getX(), (e.getY()))) {
-                            if (pieceName.contains("White")) {
-                                if (checkWhiteOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
-                                } else {
-                                    validMove = false;
-                                }
-                            } else {
-                                if (checkBlackOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
-                                } else {
-                                    validMove = false;
-                                }
-                            }
-                        } else {
-                            validMove = true;
-                        }
-                    }
-                } else {
+            } else if (pieceName.contains("King")) {
+                if (pieceName.contains("White") && (!whiteTurn)) {
                     validMove = false;
-                }
-            }
-        } else if (pieceName.contains("Queen")) {
-            Boolean inTheWay = false;
-            int distance = Math.abs(startX - landingX);
+                } else if (pieceName.contains("Black") && (!blackTurn)) {
+                    validMove = false;
+                } else {
+                    if(surroundPiecePresent(e.getX(), (e.getY()))){
+                        int newX = e.getX();
+                        int newY = e.getY();
+                        Component c1 = chessBoard.findComponentAt((newX * 75), newY);
+                        Component c2 = chessBoard.findComponentAt(newX, (newY * 75));
+                        Component c3 = chessBoard.findComponentAt((newX * 75), (newY / 75));
+                        Component c4 = chessBoard.findComponentAt((newX / 75), newY);
+                        Component c5 = chessBoard.findComponentAt(newX, (newY / 75));
+                        Component c6 = chessBoard.findComponentAt((newX / 75), (newY / 75));
+                        Component c7 = chessBoard.findComponentAt((newX * 75), (newY / 75));
+                        Component c8 = chessBoard.findComponentAt((newX / 75), (newY * 75));
 
-            if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
-                validMove = false;
-            } else {
-                if (((Math.abs(startX - landingX) != 0) && (Math.abs(startY - landingY) == 0)) || ((Math.abs(startX - landingX) == 0 && (landingY - startY) != 0))) {
-                    if (Math.abs(startX - landingX) != 0) {
-                        if (startX - landingX > 0) {
-                            for (int i = 0; i < xMovement; i++) {
-                                if (piecePresent(initialX - (i * 75), e.getY())) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        } else {
-                            for (int i = 0; i < xMovement; i++) {
-                                if (piecePresent(initialX + (i * 75), e.getY())) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        }
-                    } else {
-                        if (startY - landingY > 0) {
-                            for (int i = 0; i < yMovement; i++) {
-                                if (piecePresent(e.getX(), initialY - (i * 75))) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
-                        } else {
-                            for (int i = 0; i < yMovement; i++) {
-                                if (piecePresent(e.getX(), initialY + (i * 57))) {
-                                    inTheWay = true;
-                                    break;
-                                } else {
-                                    inTheWay = false;
-                                }
-                            }
+                        JLabel awaitingPiece1 = (JLabel)c1;
+                        JLabel awaitingPiece2 = (JLabel)c2;
+                        JLabel awaitingPiece3 = (JLabel)c3;
+                        JLabel awaitingPiece4 = (JLabel)c4;
+                        JLabel awaitingPiece5 = (JLabel)c5;
+                        JLabel awaitingPiece6 = (JLabel)c6;
+                        JLabel awaitingPiece7 = (JLabel)c7;
+                        JLabel awaitingPiece8 = (JLabel)c8;
+
+                        String tmp1 = awaitingPiece1.getIcon().toString();
+                        String tmp2 = awaitingPiece2.getIcon().toString();
+                        String tmp3 = awaitingPiece3.getIcon().toString();
+                        String tmp4 = awaitingPiece4.getIcon().toString();
+                        String tmp5 = awaitingPiece5.getIcon().toString();
+                        String tmp6 = awaitingPiece6.getIcon().toString();
+                        String tmp7 = awaitingPiece7.getIcon().toString();
+                        String tmp8 = awaitingPiece8.getIcon().toString();
+
+                        if (((tmp1.contains("King")))){
+                            validMove = false;
+                        } else if (((tmp2.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp3.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp4.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp5.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp6.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp7.contains("King")))) {
+                            validMove = false;
+                        } else if (((tmp8.contains("King")))) {
+                            validMove = false;
                         }
                     }
-                    if (inTheWay) {
+
+                    else if ((landingX > 7) || (landingY > 7)) {
+                        validMove = false;
+                    } else if ((xMovement > 1) || (yMovement > 1)) {
                         validMove = false;
                     } else {
                         if (piecePresent(e.getX(), (e.getY()))) {
@@ -530,99 +708,21 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                             validMove = true;
                         }
                     }
-                } else if (Math.abs(startX - landingX) == Math.abs(startY - landingY)) {
-                    if ((startX - landingX < 0) && (startY - landingY < 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent(((initialX + (i * 75))), (initialY + (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX < 0) && (startY - landingY > 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX + (i * 75)), (initialY - (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX > 0) && (startY - landingY > 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX - (i * 75)), (initialY - (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    } else if ((startX - landingX > 0) && (startY - landingY < 0)) {
-                        for (int i = 0; i < distance; i++) {
-                            if (piecePresent((initialX - (i * 75)), (initialY + (i * 75)))) {
-                                inTheWay = true;
-                            }
-                        }
-                    }
-                    if (inTheWay) {
-                        validMove = false;
-                    } else {
-                        if (piecePresent(e.getX(), (e.getY()))) {
-                            if (pieceName.contains("White")) {
-                                if (checkWhiteOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
-                                } else {
-                                    validMove = false;
-                                }
-                            } else {
-                                if (checkBlackOpponent(e.getX(), e.getY())) {
-                                    validMove = true;
-                                } else {
-                                    validMove = false;
-                                }
-                            }
-                        } else {
-                            validMove = true;
-                        }
-                    }
-                } else {
-                    validMove = false;
                 }
             }
-        } else if (pieceName.contains("King")) {
-            if (((landingX < 0) || (landingX > 7)) || ((landingY < 0) || (landingY > 7))) {
-                validMove = false;
-            }
-            else if((xMovement > 1) || (yMovement > 1)) {
-                validMove = false;
-            }
-            else{
-				if (piecePresent(e.getX(), (e.getY()))) {
-					if (pieceName.contains("White")) {
-						if (checkWhiteOpponent(e.getX(), e.getY())) {
-							validMove = true;
-						} else {
-							validMove = false;
-						}
-					} else {
-						if (checkBlackOpponent(e.getX(), e.getY())) {
-							validMove = true;
-						} else {
-							validMove = false;
-						}
-					}
-				} else {
-					validMove = true;
-				}
-			}
-        }
-
-        if (!validMove) {
-            int location = 0;
-            if (startY == 0) {
-                location = startX;
+            if (!validMove) {
+                int location = 0;
+                if (startY == 0) {
+                    location = startX;
+                } else {
+                    location = (startY * 8) + startX;
+                }
+                String pieceLocation = pieceName + ".png";
+                pieces = new JLabel(new ImageIcon(pieceLocation));
+                panels = (JPanel) chessBoard.getComponent(location);
+                panels.add(pieces);
             } else {
-                location = (startY * 8) + startX;
-            }
-            String pieceLocation = pieceName + ".png";
-            pieces = new JLabel(new ImageIcon(pieceLocation));
-            panels = (JPanel) chessBoard.getComponent(location);
-            panels.add(pieces);
-        } else {
-            try {
-                if (success) {
+                if (whiteSuccess) {
                     int location = 56 + (e.getX() / 75);
                     if (c instanceof JLabel) {
                         Container parent = c.getParent();
@@ -636,6 +736,24 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                         parent = (JPanel) chessBoard.getComponent(location);
                         parent.add(pieces);
                     }
+
+                } else if (blackSuccess) {
+                    if (landingY == 0) {
+                        int location = 0 + (e.getX() / 75);
+                        if (c instanceof JLabel) {
+                            Container parent = c.getParent();
+                            parent.remove(0);
+                            pieces = new JLabel(new ImageIcon("BlackQueen.png"));
+                            parent = (JPanel) chessBoard.getComponent(location);
+                            parent.add(pieces);
+                        } else {
+                            Container parent = (Container) c;
+                            pieces = new JLabel(new ImageIcon("BlackQueen.png"));
+                            parent = (JPanel) chessBoard.getComponent(location);
+                            parent.add(pieces);
+                        }
+                    }
+
                 } else {
                     if (c instanceof JLabel) {
                         Container parent = c.getParent();
@@ -656,30 +774,36 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                     System.out.println("The landing coordinates are: (" + landingX + ", " + landingY + ")");
                     System.out.println("------------------------------------------------------------");
                 }
-            } catch (NullPointerException outOfBounds) {
-                int location = 0;
-                if (startY == 0) {
-                    location = startX;
-                } else {
-                    location = (startY * 8) + startX;
+                if (whiteTurn) {
+                    whiteTurn = false;
+                    blackTurn = true;
                 }
-                String pieceLocation = pieceName + ".png";
-                pieces = new JLabel(new ImageIcon(pieceLocation));
-                panels = (JPanel) chessBoard.getComponent(location);
-                panels.add(pieces);
+                if (blackTurn) {
+                    blackTurn = false;
+                    whiteTurn = true;
+                }
             }
+        } catch (NullPointerException outOfBounds) {
+            int location = 0;
+            if (startY == 0) {
+                location = startX;
+            } else {
+                location = (startY * 8) + startX;
+            }
+            String pieceLocation = pieceName + ".png";
+            pieces = new JLabel(new ImageIcon(pieceLocation));
+            panels = (JPanel) chessBoard.getComponent(location);
+            panels.add(pieces);
         }
     }
 
     public void mouseClicked(MouseEvent e) {
-
     }
 
     public void mouseMoved(MouseEvent e) {
     }
 
     public void mouseEntered(MouseEvent e) {
-
     }
 
     public void mouseExited(MouseEvent e) {
