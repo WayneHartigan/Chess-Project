@@ -140,11 +140,8 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 JLabel awaitingPiece1 = (JLabel) c1;
                 String tmp1 = awaitingPiece1.getIcon().toString();
                 if (tmp1.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -152,13 +149,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c2 instanceof JPanel)) {
                 JLabel awaitingPiece2 = (JLabel) c2;
                 String tmp2 = awaitingPiece2.getIcon().toString();
-                System.out.println(tmp2 + "tmp2");
                 if (tmp2.contains("King") && (tmp2 != null)) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -166,13 +159,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c3 instanceof JPanel)) {
                 JLabel awaitingPiece3 = (JLabel) c3;
                 String tmp3 = awaitingPiece3.getIcon().toString();
-                System.out.println(tmp3 + "tmp3");
                 if (tmp3.contains("King") && (tmp3 != null)) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -180,13 +169,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c4 instanceof JPanel)) {
                 JLabel awaitingPiece4 = (JLabel) c4;
                 String tmp4 = awaitingPiece4.getIcon().toString();
-                System.out.println(tmp4 + "tmp4");
                 if (tmp4.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -194,13 +179,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c5 instanceof JPanel)) {
                 JLabel awaitingPiece5 = (JLabel) c5;
                 String tmp5 = awaitingPiece5.getIcon().toString();
-                System.out.println(tmp5 + "tmp5");
                 if (tmp5.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -208,13 +189,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c6 instanceof JPanel)) {
                 JLabel awaitingPiece6 = (JLabel) c6;
                 String tmp6 = awaitingPiece6.getIcon().toString();
-                System.out.println(tmp6 + "tmp6");
                 if (tmp6.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -222,13 +199,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c7 instanceof JPanel)) {
                 JLabel awaitingPiece7 = (JLabel) c7;
                 String tmp7 = awaitingPiece7.getIcon().toString();
-                System.out.println(tmp7 + "tmp7");
                 if (tmp7.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
@@ -236,22 +209,17 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
             if (!(c8 instanceof JPanel)) {
                 JLabel awaitingPiece8 = (JLabel) c8;
                 String tmp8 = awaitingPiece8.getIcon().toString();
-                System.out.println(tmp8 + "tmp8");
                 if (tmp8.contains("King")) {
-                    System.out.println("King Here");
                     kingPresent = true;
                 }
-            } else {
-                kingPresent = false;
             }
         }
 
         if (kingPresent){
-            System.out.println("King here");
-            return kingPresent;
+            return true;
         }
         else {
-            return kingPresent;
+            return false;
         }
     }
     /*
