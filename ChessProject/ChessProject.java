@@ -21,7 +21,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
     int initialY;
     JPanel panels;
     JLabel pieces;
-    int turn = 2;
+    int turn = 0;
 
     public ChessProject() {
         Dimension boardSize = new Dimension(600, 600);
@@ -544,9 +544,9 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                 }
             } else if (pieceName.contains("Rook")) {
                 Boolean inTheWay = false;
-                if (pieceName.contains("White") && ((turn % 2) == 0)) {
+                if (pieceName.contains("White") && ((turn % 2) != 0)) {
                     validMove = false;
-                } else if (pieceName.contains("Black") && ((turn % 2) != 0)) {
+                } else if (pieceName.contains("Black") && ((turn % 2) == 0)) {
                     validMove = false;
                 } else {
                     if ((landingX > 7) || (landingY > 7)) {
@@ -686,12 +686,18 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                                     if (pieceName.contains("White")) {
                                         if (checkWhiteOpponent(e.getX(), e.getY())) {
                                             validMove = true;
+                                            if (checkBlackKingTaken(e.getX(), e.getY())) {
+                                                whiteGameWon = true;
+                                            }
                                         } else {
                                             validMove = false;
                                         }
                                     } else {
                                         if (checkBlackOpponent(e.getX(), e.getY())) {
                                             validMove = true;
+                                            if (checkWhiteKingTaken(e.getX(), e.getY())) {
+                                                blackGameWon = true;
+                                            }
                                         } else {
                                             validMove = false;
                                         }
@@ -854,8 +860,8 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
                     System.out.println("The yMovement is: " + yMovement);
                     System.out.println("The landing coordinates are: (" + landingX + ", " + landingY + ")");
                     System.out.println("------------------------------------------------------------");
+                    turn ++;
                 }
-                turn ++;
                 if (whiteGameWon) {
                     JOptionPane.showMessageDialog(null, "White Wins!");
                     System.exit(0);
